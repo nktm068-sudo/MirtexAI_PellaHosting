@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Миртекс AI</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #121212; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        h2 { color: #ff0055; text-shadow: 0 0 10px rgba(255,0,85,0.3); margin-bottom: 20px; }
+        #chat-window { width: 480px; height: 420px; background: #1e1e1e; border-radius: 12px; padding: 15px; overflow-y: auto; box-shadow: 0 8px 24px rgba(0,0,0,0.6); display: flex; flex-direction: column; gap: 12px; border: 1px solid #2d2d2d; }
+        .msg { padding: 10px 14px; border-radius: 10px; max-width: 80%; word-wrap: break-word; line-height: 1.4; font-size: 15px; }
+        .user { background: #007bff; align-self: flex-end; color: #fff; }
+        .bot { background: #2a2a2a; align-self: flex-start; color: #00ffcc; border: 1px solid #3a3a3a; }
+        #input-area { display: flex; width: 512px; margin-top: 15px; gap: 10px; }
+        input { flex: 1; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #222; color: #fff; font-size: 15px; outline: none; }
+        input:focus { border-color: #ff0055; }
+        button { padding: 12px 24px; border: none; background: #ff0055; color: #fff; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 15px; }
+        button:hover { background: #dd0044; }
+    </style>
+</head>
+<body>
+
+    <h2>Миртекс AI</h2>
+    <div id="chat-window">
+        <div class="msg bot">Привет! Я Миртекс AI. Чем могу помочь?</div>
+    </div>
+    <div id="input-area">
+        <input type="text" id="user-msg" placeholder="Спроси меня о чём-нибудь..." onkeypress="if(event.key==='Enter') send()">
+        <button onclick="send()">Отправить</button>
+    </div>
+
+    <script>
+        function appendMessage(text, className) {
+            const win = document.getElementById('chat-window');
+            const div = document.createElement('div');
+            div.className = 'msg ' + className;
+            div.innerText = text;
+            win.appendChild(div);
+            win.scrollTop = win.scrollHeight;
+        }
+
+        async function send() {
+            const input = document.getElementById('user-msg');
+            const text = input.value.trim();
+            if (!text) return;
+
+            appendMessage(text, 'user');
+            input.value = '';
+
+            appendMessage('🧠 Миртекс думает...', 'bot');
+            const win = document.getElementById('chat-window');
+            const loadingMsgNode = win.lastChild;
+            
+            // 🔐 Твоя секретная ссылка на сервер Pella, замаскированная пробелами
+            const SPACED_SERVER_URL = "h t t p s : / / v e r m i l i o n b o v i d . o n p e l l a . a p p";
+            
+            const cleanServerUrl = SPACED_SERVER_URL.replace(/\s+/g, '');
+            const finalUrl = cleanServerUrl + '/get_response?text=' + encodeURIComponent(text);
+
+            try {
+                const response = await fetch(finalUrl);
+                const data = await response.json();
+                loadingMsgNode.innerText = data.reply;
+            } catch (err) {
+                loadingMsgNode.innerText = "❌ Ошибка: Сервер Pella спит или обновляет SSL-сертификат. Зайди в панель Pella и нажми Restart!";
+            }
+            win.scrollTop = win.scrollHeight;
+        }
+    </script>
+
+</body>
+</html>
